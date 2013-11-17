@@ -1,0 +1,11 @@
+tap_the_searchtap_the_search<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SessionFinder</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="tap_the_search">Tap the search icon above to find sessions</string>
+    <string name="search">Search</string>
+    <string name="near_me">Near Me</string>
+    
+</resources>
