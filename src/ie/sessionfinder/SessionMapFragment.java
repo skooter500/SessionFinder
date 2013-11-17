@@ -11,15 +11,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class SessionMapFragment extends SupportMapFragment implements SessionListHandler, LocationListener {
 	MenuItem geoItem;
 	double latitude;
 	double longitude;
-	
+	boolean gotAnUpdate;
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -51,11 +57,12 @@ public class SessionMapFragment extends SupportMapFragment implements SessionLis
             return;
         }
         
+        gotAnUpdate = false;
         if(gps)
         {
             lm.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
         }
-        else if (network)
+        if (network)
         {
             lm.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
         }            
@@ -67,16 +74,42 @@ public class SessionMapFragment extends SupportMapFragment implements SessionLis
 	}
 	@Override
 	public void onSessionListReceived(ArrayList<Session> matches) {
-		
+		GoogleMap googleMap;
+	    googleMap = getMap();
+	    
+	    if (matches.size() == 0)
+	    {
+	    	Toast.makeText(getActivity(), "No nearby sessions", Toast.LENGTH_SHORT).show();
+	    	return;
+	    }
+	    
+	    for(Session session:matches)
+	    {
+	    	LatLng latLng = new LatLng(session.latitude, session.longitude);
+	        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+	        googleMap.addMarker(new MarkerOptions()
+	                .position(latLng)
+	                .title(session.venue)
+	                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+	        googleMap.getUiSettings().setCompassEnabled(true);
+	        googleMap.getUiSettings().setZoomControlsEnabled(true);
+	        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+	    }
 		
 	}
 	@Override
 	public void onLocationChanged(Location location) {
+		
+		if (gotAnUpdate)
+		{
+			return;
+		}
+		gotAnUpdate = true;
 		longitude = location.getLongitude();
         latitude = location.getLatitude();
         SessionSearchSubmitter submitter = new SessionSearchSubmitter(getActivity(), this);
-        //String params = "nearby?latlon=42.34891891,-71.15130615&radius=75";
-        String params = "nearby?latlon=" + latitude + "," + longitude + "&radius=100";
+        String params = "nearby?latlon=42.34891891,-71.15130615&radius=75";
+        //String params = "nearby?latlon=" + latitude + "," + longitude + "&radius=75";
         submitter.execute(params);
 	}
 	@Override

@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class SessionListFragment extends ListFragment implements SessionListHandler
 {	
@@ -75,7 +76,12 @@ public class SessionListFragment extends ListFragment implements SessionListHand
 	}
 
 	@Override
-	public void onSessionListReceived(ArrayList<Session> matches) {
+	public void onSessionListReceived(ArrayList<Session> matches) {		
+		if (matches.size() == 0)
+	    {
+	    	Toast.makeText(getActivity(), "No matches", Toast.LENGTH_SHORT);
+	    	return;
+	    }
 		ArrayAdapter<Session> aa= new ArrayAdapter<Session>(getActivity(), android.R.layout.simple_list_item_1, matches);
 		setListAdapter(aa);		
 		aa.notifyDataSetChanged();

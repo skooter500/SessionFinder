@@ -62,7 +62,7 @@ public class SessionSearchSubmitter extends AsyncTask<String, Integer, String> {
 				session.id = jsonSession.getInt("id");
 				session.url = jsonSession.getString("url");
 				session.latitude = jsonSession.getDouble("latitude");
-				session.longitude = jsonSession.getDouble("latitude");
+				session.longitude = jsonSession.getDouble("longitude");
 				session.town = "" + Html.fromHtml(jsonSession.getString("town"));
 				session.area = "" + Html.fromHtml(jsonSession.getString("area"));
 				session.country = "" + Html.fromHtml(jsonSession.getString("country"));								
